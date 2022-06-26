@@ -5,6 +5,11 @@ const app = express();
 
 app.use(express.json());
 
+app.use((req, res, next) => {
+  console.log("I am middleware !");
+  next();
+});
+
 app.get("/", (request, response) => {
   response.send("Hello from express js!");
 });
