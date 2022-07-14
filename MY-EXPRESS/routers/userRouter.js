@@ -17,9 +17,13 @@ const newUser = async (req, res) => {
   });
   try {
     const result = await newUser.save();
+    const token = newUser.generateAuthToken();
     res.send({
-      name: result.name,
-      email: result.email,
+      token: token,
+      data: {
+        name: result.name,
+        email: result.email,
+      },
     });
   } catch (err) {
     const errMsgs = [];
