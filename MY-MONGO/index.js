@@ -5,7 +5,7 @@ mongoose
   .then(() => console.log("Connected to MongoDB..."))
   .catch((err) => console.error("Could not connect to MongoDB...", err));
 
-const studentSchema = new mongoose.Schema({
+const studentSchema = mongoose.Schema({
   firstName: { type: String, required: [true, "First name is required"] },
   lastName: { type: String, required: [true, "Last name is required"] },
   email: { type: String, required: [true, "Email is required"] },

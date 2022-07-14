@@ -1,76 +1,28 @@
-// Express
 const express = require("express");
-const db = require("./db");
 const app = express();
 
+// Router
+const studentRouter = require("./routers/studentRouter");
+const userRouter = require("./routers/userRouter");
+const authRouter = require("./routers/authRouter");
+
+const morgan = require("morgan");
+const mongoose = require("mongoose");
+
+mongoose
+  .connect("mongodb://0.0.0.0:27017/my-students")
+  .then(() => console.log("Connected to MongoDB!"))
+  .catch((err) => console.error("MongoDB Connection Failed!", err));
+
 app.use(express.json());
+app.use(morgan("dev"));
 
-app.use((req, res, next) => {
-  console.log("I am middleware !");
-  next();
-});
+app.use("/api/students", studentRouter);
+app.use("/api/user", userRouter);
+app.use("/api/auth", authRouter);
 
-app.get("/", (request, response) => {
-  response.send("Hello from express js!");
-});
-
-// GET => List
-// GET detail => students/2
-// POST
-
-app.get("/api/students", (req, res) => {
-  db.getDbStudents().then((students) => {
-    res.send(students);
-  });
-});
-
-app.post("/api/students", (req, res) => {
-  const student = req.body;
-  db.getDbStudents().then((students) => {
-    students.push(student);
-    db.insertDbStudent(students).then((data) => {
-      res.send(student);
-    });
-  });
-});
-
-app.get("/api/students/:id", (req, res) => {
-  const id = req.params.id;
-  db.getDbStudents().then((students) => {
-    const student = students.find((student) => student.id === parseInt(id));
-    if (!student) {
-      res.status(404).send("Student not found");
-    } else {
-      res.send(student);
-    }
-  });
-});
-
-app.put("/api/students/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const updatedData = req.body;
-  db.getDbStudents().then((students) => {
-    const student = students.find((student) => student.id === parseInt(id));
-    if (!student) {
-      res.status(404).send("Student not found");
-    } else {
-      const i = students.findIndex((s) => s.id === id);
-      students[i] = updatedData;
-      db.insertDbStudent(students).then((msg) => res.send(updatedData));
-    }
-  });
-});
-
-app.delete("/api/students/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  db.getDbStudents().then((students) => {
-    const student = students.find((student) => student.id === id);
-    if (!student) {
-      res.status(404).send("Student not found");
-    }
-    const updatedStudents = students.filter((s) => s.id !== id);
-    db.insertDbStudent(updatedStudents).then((msg) => res.send(msg));
-  });
+app.get("/", (req, res) => {
+  res.send("Hello from express js!");
 });
 
 const port = 3000;
@@ -78,3 +30,7 @@ const port = 3000;
 app.listen(port, () => {
   console.log(`Listening on port ${port}....`);
 });
+
+// Mongoose -> Model -> Collection
+// Import Model
+// Connect Database
