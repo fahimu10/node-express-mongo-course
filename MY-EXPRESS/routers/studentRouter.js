@@ -1,6 +1,7 @@
 const express = require("express");
 const { Student } = require("../models/students");
 const router = express.Router();
+const authorize = require("../middlewares/authorize");
 
 const studentList = async (req, res) => {
   try {
@@ -61,7 +62,7 @@ const studentDelete = async (req, res) => {
   }
 };
 
-router.route("/").get(studentList).post(newStudent);
+router.route("/").get(authorize, studentList).post(newStudent);
 
 router
   .route("/:id")
