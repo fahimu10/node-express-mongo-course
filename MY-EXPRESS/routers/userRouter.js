@@ -2,6 +2,7 @@ const express = require("express");
 const { User } = require("../models/users");
 const bcrypt = require("bcrypt");
 const router = express.Router();
+const authorize = require("../middlewares/authorize");
 
 const newUser = async (req, res) => {
   // check user exist
@@ -35,5 +36,8 @@ const newUser = async (req, res) => {
 };
 
 router.route("/").post(newUser);
+router.route("/me").get(authorize, (req, res) => {
+  res.send(req.user);
+});
 
 module.exports = router;
